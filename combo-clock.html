@@ -5,13 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Combo Clock</title>
 <style>
-  /* ── TAMAÑO ─────────────────────────────────
-     1    = original
-     0.4  = 60% más pequeño   ← actual
-  ─────────────────────────────────────────── */
+  /* ── TAMAÑO ──────────────────────────────────────────────
+     El reloj se mide contra el marco, así que nunca se corta.
+     Ajusta el tamaño arrastrando el bloque de embed en Notion.
+
+     --fill: cuánto del marco ocupa el reloj (0.9 = 90%)
+     Bájalo si quieres más aire alrededor.
+  ────────────────────────────────────────────────────────── */
   :root {
-    --scale: 0.4;
-    --dial: 480px;
+    --fill: 0.9;
 
     --ink:   #111111;
     --hour:  #3d3d3d;
@@ -32,33 +34,28 @@
     overflow: hidden;
   }
 
-  /* la caja se encoge junto al reloj: sin espacio sobrante */
-  .stage {
-    width:  calc(var(--dial) * var(--scale));
-    height: calc(var(--dial) * var(--scale));
-  }
-
+  /* Todas las medidas de dentro van en `em`, como fracción del
+     diámetro. Cambiar el diámetro reescala el reloj entero. */
   .clock {
     position: relative;
-    width: var(--dial);
-    height: var(--dial);
-    transform: scale(var(--scale));
-    transform-origin: top left;
+    font-size: calc(min(100vw, 100vh) * var(--fill)); /* = diámetro */
+    width:  1em;
+    height: 1em;
   }
 
   /* marcas horarias */
   .tick {
     position: absolute;
     top: 0; left: 50%;
-    width: 2px; height: 50%;
-    margin-left: -1px;
+    width: 0.0042em; height: 50%;
+    margin-left: -0.0021em;
     transform-origin: bottom center;
   }
   .tick::before {
     content: "";
     display: block;
-    width: 2px;
-    height: 24px;
+    width: 0.0042em;
+    height: 0.05em;
     background: var(--tick);
   }
 
@@ -69,34 +66,35 @@
     transform-origin: bottom center;
   }
   .h-hour {
-    width: 6px; height: 33%;
-    margin-left: -3px;
+    width: 0.0125em; height: 33%;
+    margin-left: -0.00625em;
     background: var(--hour);
-    border-radius: 3px;
+    border-radius: 0.00625em;
   }
   .h-min {
-    width: 2.5px; height: 47%;
-    margin-left: -1.25px;
+    width: 0.0052em; height: 47%;
+    margin-left: -0.0026em;
     background: var(--ink);
   }
   .h-sec {
-    width: 1.5px; height: 47%;
-    margin-left: -0.75px;
+    width: 0.0031em; height: 47%;
+    margin-left: -0.0016em;
     background: var(--ink);
   }
+  /* contrapeso de la aguja de segundos */
   .h-sec::after {
     content: "";
     position: absolute;
     left: 0; top: 100%;
-    width: 1.5px; height: 34px;
+    width: 0.0031em; height: 0.0708em;
     background: var(--ink);
   }
 
   .pin {
     position: absolute;
     top: 50%; left: 50%;
-    width: 22px; height: 22px;
-    margin: -11px 0 0 -11px;
+    width: 0.0458em; height: 0.0458em;
+    margin: -0.0229em 0 0 -0.0229em;
     border-radius: 50%;
     background: var(--ink);
   }
@@ -104,34 +102,32 @@
   /* lectura digital, dentro de la esfera */
   .readout {
     position: absolute;
-    top: calc(50% + 42px);
+    top: calc(50% + 0.0875em);
     left: 0;
     width: 100%;
     text-align: center;
   }
   .time {
-    font-size: 38px;
+    font-size: 0.0792em;
     line-height: 1.35;
     letter-spacing: 0.01em;
   }
   .day {
-    font-size: 25px;
+    font-size: 0.0521em;
     line-height: 1.5;
   }
 </style>
 </head>
 <body>
-  <div class="stage">
-    <div class="clock" id="clock">
-      <div class="hand h-hour" id="hour"></div>
-      <div class="hand h-min"  id="minute"></div>
-      <div class="hand h-sec"  id="second"></div>
-      <div class="pin"></div>
+  <div class="clock" id="clock">
+    <div class="hand h-hour" id="hour"></div>
+    <div class="hand h-min"  id="minute"></div>
+    <div class="hand h-sec"  id="second"></div>
+    <div class="pin"></div>
 
-      <div class="readout">
-        <div class="time" id="time">--:--:--</div>
-        <div class="day"  id="day"></div>
-      </div>
+    <div class="readout">
+      <div class="time" id="time">--:--:--</div>
+      <div class="day"  id="day"></div>
     </div>
   </div>
 
