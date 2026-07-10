@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Combo Clock</title>
+<style>
+  /* ── TAMAÑO ─────────────────────────────────
+     1    = original
+     0.4  = 60% más pequeño   ← actual
+  ─────────────────────────────────────────── */
+  :root {
+    --scale: 0.4;
+    --dial: 480px;
+
+    --ink:   #111111;
+    --hour:  #3d3d3d;
+    --tick:  #d9d9d9;
+    --paper: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    display: grid;
+    place-items: center;
+    background: var(--paper);
+    font-family: Arial, Helvetica, "Liberation Sans", sans-serif;
+    color: var(--ink);
+    overflow: hidden;
+  }
+
+  .clock {
+    position: relative;
+    width: var(--dial);
+    height: var(--dial);
+    transform: scale(var(--scale));
+  }
+
+  /* marcas horarias */
+  .tick {
+    position: absolute;
+    top: 0; left: 50%;
+    width: 2px; height: 50%;
+    margin-left: -1px;
+    transform-origin: bottom center;
+  }
+  .tick::before {
+    content: "";
+    display: block;
+    width: 2px;
+    height: 24px;
+    background: var(--tick);
+  }
+
+  /* agujas */
+  .hand {
+    position: absolute;
+    left: 50%; bottom: 50%;
+    transform-origin: bottom center;
+  }
+  .h-hour {
+    width: 6px; height: 33%;
+    margin-left: -3px;
+    background: var(--hour);
+    border-radius: 3px;
+  }
+  .h-min {
+    width: 2.5px; height: 47%;
+    margin-left: -1.25px;
+    background: var(--ink);
+  }
+  .h-sec {
+    width: 1.5px; height: 47%;
+    margin-left: -0.75px;
+    background: var(--ink);
+  }
+  /* contrapeso de la aguja de segundos */
+  .h-sec::after {
+    content: "";
+    position: absolute;
+    left: 0; top: 100%;
+    width: 1.5px; height: 34px;
+    background: var(--ink);
+  }
+
+  .pin {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 22px; height: 22px;
+    margin: -11px 0 0 -11px;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+
+  /* lectura digital, dentro de la esfera */
+  .readout {
+    position: absolute;
+    top: calc(50% + 42px);
+    left: 0;
+    width: 100%;
+    text-align: center;
+  }
+  .time {
+    font-size: 38px;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+  }
+  .day {
+    font-size: 25px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+  <div class="clock" id="clock">
+    <div class="hand h-hour" id="hour"></div>
+    <div class="hand h-min"  id="minute"></div>
+    <div class="hand h-sec"  id="second"></div>
+    <div class="pin"></div>
+
+    <div class="readout">
+      <div class="time" id="time">--:--:--</div>
+      <div class="day"  id="day"></div>
+    </div>
+  </div>
+
+<script>
+  const clock = document.getElementById("clock");
+  for (let i = 0; i < 12; i++) {
+    const t = document.createElement("div");
+    t.className = "tick";
+    t.style.transform = `rotate(${i * 30}deg)`;
+    clock.prepend(t);
+  }
+
+  const pad = n => String(n).padStart(2, "0");
+
+  function tick() {
+    const now = new Date();
+    const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+
+    document.getElementById("hour").style.transform   = `rotate(${(h % 12) * 30 + m * 0.5}deg)`;
+    document.getElementById("minute").style.transform = `rotate(${m * 6 + s * 0.1}deg)`;
+    document.getElementById("second").style.transform = `rotate(${s * 6}deg)`;
+
+    const h12 = h % 12 || 12;
+    const ampm = h < 12 ? "AM" : "PM";
+    document.getElementById("time").textContent = `${h12}:${pad(m)}:${pad(s)} ${ampm}`;
+    document.getElementById("day").textContent  = now.toLocaleDateString("en-US", { weekday: "long" });
+
+    requestAnimationFrame(tick);
+  }
+  tick();
+</script>
+</body>
+</html>
