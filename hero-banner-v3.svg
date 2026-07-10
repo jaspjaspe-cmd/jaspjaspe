@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Banner decorativo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EDE7F6"/>
+      <stop offset="45%" stop-color="#E3F0EA"/>
+      <stop offset="100%" stop-color="#FBEDE4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fondo sobredimensionado: cubre el recorte en cualquier proporción -->
+  <rect x="-1500" y="-800" width="4500" height="2000" fill="url(#bg)"/>
+
+  <!-- Formas de apoyo, ancladas a las esquinas -->
+  <circle cx="1230" cy="110" r="150" fill="#D9CFEF" opacity="0.5"/>
+  <circle cx="1360" cy="320" r="105" fill="#F5D9C4" opacity="0.5"/>
+  <circle cx="160" cy="330" r="130" fill="#CFE6DA" opacity="0.5"/>
+  <circle cx="90" cy="70" r="80" fill="#D9CFEF" opacity="0.35"/>
+
+  <!-- Motivo central: siempre visible porque el recorte es xMidYMid -->
+  <g fill="none" stroke-width="16" stroke-linecap="round" opacity="0.9" transform="translate(750 230)">
+    <path d="M-106 0 a106 106 0 0 1 212 0" stroke="#C9B8E0"/>
+    <path d="M-78 0 a78 78 0 0 1 156 0" stroke="#E7A6A0"/>
+    <path d="M-50 0 a50 50 0 0 1 100 0" stroke="#F0C58A"/>
+    <path d="M-22 0 a22 22 0 0 1 44 0" stroke="#9FC8B0"/>
+    <circle cx="0" cy="0" r="7" fill="#4A4458" opacity="0.55"/>
+  </g>
+</svg>
