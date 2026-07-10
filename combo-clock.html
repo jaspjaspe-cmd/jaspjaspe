@@ -19,7 +19,7 @@
     --paper: #ffffff;
   }
 
-  * { box-sizing: border-box; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html, body { height: 100%; }
 
@@ -32,11 +32,18 @@
     overflow: hidden;
   }
 
+  /* la caja se encoge junto al reloj: sin espacio sobrante */
+  .stage {
+    width:  calc(var(--dial) * var(--scale));
+    height: calc(var(--dial) * var(--scale));
+  }
+
   .clock {
     position: relative;
     width: var(--dial);
     height: var(--dial);
     transform: scale(var(--scale));
+    transform-origin: top left;
   }
 
   /* marcas horarias */
@@ -77,7 +84,6 @@
     margin-left: -0.75px;
     background: var(--ink);
   }
-  /* contrapeso de la aguja de segundos */
   .h-sec::after {
     content: "";
     position: absolute;
@@ -115,15 +121,17 @@
 </style>
 </head>
 <body>
-  <div class="clock" id="clock">
-    <div class="hand h-hour" id="hour"></div>
-    <div class="hand h-min"  id="minute"></div>
-    <div class="hand h-sec"  id="second"></div>
-    <div class="pin"></div>
+  <div class="stage">
+    <div class="clock" id="clock">
+      <div class="hand h-hour" id="hour"></div>
+      <div class="hand h-min"  id="minute"></div>
+      <div class="hand h-sec"  id="second"></div>
+      <div class="pin"></div>
 
-    <div class="readout">
-      <div class="time" id="time">--:--:--</div>
-      <div class="day"  id="day"></div>
+      <div class="readout">
+        <div class="time" id="time">--:--:--</div>
+        <div class="day"  id="day"></div>
+      </div>
     </div>
   </div>
 
