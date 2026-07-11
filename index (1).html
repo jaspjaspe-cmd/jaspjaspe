@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reloj Azul</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --card-top: #aecdf5;
+    --card-bottom: #9dc2f1;
+    --fold: rgba(255, 255, 255, 0.4);
+    --text: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                 "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif;
+    background: transparent;
+    -webkit-font-smoothing: antialiased;
+    padding: 0;
+  }
+
+  .clock {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    max-width: 357px;
+    justify-content: center;
+  }
+
+  .flip {
+    position: relative;
+    flex: 1 1 0;
+    max-width: 168px;
+    aspect-ratio: 5 / 4.2;
+    border-radius: 11cqw;
+    perspective: 900px;
+    /* el texto interno se mide respecto al ancho de la tarjeta */
+    container-type: inline-size;
+  }
+
+  .card {
+    position: absolute;
+    left: 0; right: 0;
+    height: 50%;
+    overflow: hidden;
+    backface-visibility: hidden;
+  }
+
+  .card .content {
+    position: absolute;
+    left: 0; right: 0;
+    height: 200%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .num {
+    font-size: 66cqw;          /* se adapta al ancho del recuadro */
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .top {
+    top: 0;
+    align-items: flex-start;
+    background: var(--card-top);
+    border-radius: 11cqw 11cqw 0 0;
+    border-bottom: 1px solid var(--fold);
+  }
+  .top .content { top: 0; }
+
+  .bottom {
+    bottom: 0;
+    align-items: flex-end;
+    background: var(--card-bottom);
+    border-radius: 0 0 11cqw 11cqw;
+  }
+  .bottom .content { bottom: 0; }
+
+  .label {
+    position: absolute;
+    bottom: 4cqw;
+    font-size: 9cqw;           /* se adapta al ancho del recuadro */
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    z-index: 5;
+    white-space: nowrap;
+  }
+  .flip.left .label  { left: 9cqw; }
+  .flip.right .label { right: 9cqw; }
+
+  .flip-top, .flip-bottom { z-index: 3; transform-origin: bottom; }
+  .flip-bottom { transform-origin: top; transform: rotateX(90deg); }
+
+  .flip.go .flip-top    { animation: flipTop 0.32s ease-in forwards; }
+  .flip.go .flip-bottom { animation: flipBottom 0.32s 0.32s ease-out forwards; }
+
+  @keyframes flipTop    { to { transform: rotateX(-90deg); } }
+  @keyframes flipBottom { to { transform: rotateX(0deg); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flip.go .flip-top, .flip.go .flip-bottom { animation-duration: 0.001s; }
+  }
+</style>
+</head>
+<body>
+  <div class="clock">
+    <div class="flip left"  id="left">
+      <div class="card top"><div class="content"><span class="num">01</span></div></div>
+      <div class="card bottom"><div class="content"><span class="num">01</span></div></div>
+      <div class="card top flip-top"><div class="content"><span class="num">01</span></div></div>
+      <div class="card bottom flip-bottom"><div class="content"><span class="num">01</span></div></div>
+      <span class="label" id="label-left">PM</span>
+    </div>
+    <div class="flip right" id="right">
+      <div class="card top"><div class="content"><span class="num">55</span></div></div>
+      <div class="card bottom"><div class="content"><span class="num">55</span></div></div>
+      <div class="card top flip-top"><div class="content"><span class="num">55</span></div></div>
+      <div class="card bottom flip-bottom"><div class="content"><span class="num">55</span></div></div>
+      <span class="label" id="label-right">SATURDAY</span>
+    </div>
+  </div>
+
+<script>
+  const days = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
+
+  function setFlip(el, value, labelEl, labelText) {
+    const nums = el.querySelectorAll(".num");
+    const current = nums[0].textContent;
+    if (labelEl) labelEl.textContent = labelText;
+    if (current === value) return;
+
+    nums[2].textContent = current;
+    nums[1].textContent = current;
+    nums[0].textContent = value;
+    nums[3].textContent = value;
+
+    el.classList.remove("go");
+    void el.offsetWidth;
+    el.classList.add("go");
+  }
+
+  const left = document.getElementById("left");
+  const right = document.getElementById("right");
+  const labelLeft = document.getElementById("label-left");
+  const labelRight = document.getElementById("label-right");
+
+  function tick() {
+    const now = new Date();
+    let h = now.getHours();
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12; if (h === 0) h = 12;
+    const hh = String(h).padStart(2, "0");
+    const mm = String(now.getMinutes()).padStart(2, "0");
+
+    setFlip(left, hh, labelLeft, ampm);
+    setFlip(right, mm, labelRight, days[now.getDay()]);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
